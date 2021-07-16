@@ -13,13 +13,14 @@ BUILD_LINUX=1
 BUILD_LIBC=1
 
 # Output locations for built toolchains
-PREFIX_LINUX=/home/horinek/bin/avr-build/linux
-PREFIX_LIBC=/home/horinek/bin/avr-build/linux
+# --/../avr
+PREFIX_LINUX=$(dirname -- $(dirname -- $(dirname -- "$(readlink -f -- "$BASH_SOURCE")")))/avr
+PREFIX_LIBC=$PREFIX_LINUX
 
 # Install packages
 #apt-get install wget make mingw-w64 gcc g++ bzip2
 
-rm -rf linux
+#rm -rf linux
 
 NAME_BINUTILS="binutils-2.32"
 NAME_GCC="gcc-7.2.0"
@@ -75,10 +76,10 @@ fixGCCAVR()
 
 echo "Clearing output directories..."
 [ $BUILD_LINUX -eq 1 ] && makeDir "$PREFIX_LINUX"
-[ $BUILD_LIBC -eq 1 ] && makeDir "$PREFIX_LIBC"
+#[ $BUILD_LIBC -eq 1 ] && makeDir "$PREFIX_LIBC"
 
-PATH="$PATH":"$PREFIX_LINUX"/bin
-export PATH
+#PATH="$PATH":"$PREFIX_LINUX"/bin
+#export PATH
 
 CC=""
 export CC
@@ -87,7 +88,7 @@ echo "Downloading sources..."
 rm -f $NAME_BINUTILS.tar.xz
 rm -rf $NAME_BINUTILS/
 wget ftp://ftp.mirrorservice.org/sites/ftp.gnu.org/gnu/binutils/$NAME_BINUTILS.tar.xz
-rm -f $NAME_GCC.tar.xz
+rm -f $NAME_GCC.tar.gz
 rm -rf $NAME_GCC/
 wget ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/$NAME_GCC/$NAME_GCC.tar.gz
 

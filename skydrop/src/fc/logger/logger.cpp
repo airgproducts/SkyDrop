@@ -4,6 +4,7 @@
 
 #include "igc.h"
 #include "kml.h"
+#include "raw.h"
 
 FIL log_file;
 uint32_t logger_next = 0;
@@ -71,16 +72,20 @@ void logger_next_flight()
 
 void logger_step()
 {
+	bool raw_log = config.logger.format == LOGGER_RAW;
 	if (!fc.vario.valid)
 		return;
 
 	if (logger_next > task_get_ms_tick())
 		return;
 
-	if (fc.gps_data.new_sample & FC_GPS_NEW_SAMPLE_LOGGER)
+	if (config.logger.format != LOGGER_RAW/* && config.logger.format != LOGGER_AERO*/)
 	{
-		logger_next = task_get_ms_tick() + 1000;
-		fc.gps_data.new_sample &= ~FC_GPS_NEW_SAMPLE_LOGGER;
+		if (fc.gps_data.new_sample & FC_GPS_NEW_SAMPLE_LOGGER)
+		{
+			logger_next = task_get_ms_tick() + 1000;
+			fc.gps_data.new_sample &= ~FC_GPS_NEW_SAMPLE_LOGGER;
+		}
 	}
 
 	if (!logger_active())
@@ -100,6 +105,10 @@ void logger_step()
 		case(LOGGER_KML):
 			kml_step();
 		break;
+
+		case(LOGGER_RAW):
+			raw_step();
+			break;
 
 	}
 }
@@ -188,6 +197,10 @@ void logger_start()
 		case(LOGGER_KML):
 			fc.logger_state = kml_start(path);
 		break;
+
+		case(LOGGER_RAW):
+			fc.logger_state = raw_start(path);
+			break;
 	}
 }
 
@@ -223,6 +236,10 @@ void logger_stop()
 		case(LOGGER_KML):
 			kml_stop();
 		break;
+
+		case(LOGGER_RAW):
+			raw_stop();
+			break;
 	}
 }
 

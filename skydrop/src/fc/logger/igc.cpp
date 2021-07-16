@@ -3,7 +3,9 @@
 #include "../../drivers/storage/storage.h"
 #include "sha256.h"
 
+#ifndef IGC_NO_PRIVATE_KEY
 #include <private_key.h>
+#endif
 
 //#include "debug_on.h"
 
@@ -58,7 +60,9 @@ void igc_writeline(char * line, bool sign = true)
 #endif
 }
 
+#ifndef IGC_NO_PRIVATE_KEY
 IGC_PRIVATE_KEY_BODY
+#endif
 
 void igc_write_grecord()
 {
@@ -102,9 +106,12 @@ uint8_t igc_start(char * path)
 	char line[79];
 	char id[32];
 
-	sha256.init();
 
+	#ifndef IGC_NO_PRIVATE_KEY
+	sha256.init();
+	
 	IGC_PRIVATE_KEY_ADD;
+	#endif
 
 	datetime_from_epoch(time_get_utc(), &sec, &min, &hour, &day, &wday, &month, &year);
 

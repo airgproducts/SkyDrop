@@ -174,10 +174,10 @@ struct cfg_autostart
 
 #define LOGGER_IGC	0
 #define LOGGER_KML	1
-//#define LOGGER_RAW	2
+#define LOGGER_RAW	2
 //#define LOGGER_AERO	3
 
-#define NUMBER_OF_FORMATS	2
+#define NUMBER_OF_FORMATS	3
 #define LOG_TEXT_LEN		50
 
 struct cfg_logger
