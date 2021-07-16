@@ -56,15 +56,21 @@ set(SRC_PATH     "${BASE_PATH}/src")
 
 # Compiler flags
 set(CSTANDARD "-std=gnu99")
-set(CDEBUG    "-gstabs -g -ggdb")
+#set(CDEBUG    "-gstabs -g -ggdb")
 set(CDEBUG "")
-set(CWARN     "-Wall -Wstrict-prototypes -Wl,--gc-sections -Wl,--relax")
+set(CWARN     "-Wall -Wstrict-prototypes")
 #set(CTUNING   "-funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -ffunction-sections -fdata-sections")
-set(CTUNING "-fdata-sections -ffunction-sections -mtiny-stack")
-set(CTUNING " ${CTUNING} -fno-tree-ter -fno-caller-saves -mstrict-X -fno-optimize-sibling-calls -mcall-prologues -finline-limit=5 -fno-split-wide-types -fno-tree-scev-cprop")
-set(CTUNING "${CTUNING} -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums ")
+set(CTUNING "-fdata-sections")
+set(CTUNING "${CTUNING}  -ffunction-sections")
+#set(CTUNING " ${CTUNING}  -mtiny-stack -fno-tree-ter -fno-caller-saves -mstrict-X -fno-optimize-sibling-calls -mcall-prologues -finline-limit=5 -fno-split-wide-types -fno-tree-scev-cprop")
+#set(CTUNING "${CTUNING} -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums ")
 set(COPT      "-Os")
-set(LOPT      "-Wl,--relax -Wl,--gc-sections -Wl,-u,vfprintf -lm -Wl,--section-start=.fw_info=0x00810000 -Wl,--section-start=.eeprom=0x00810020 -Wl,--section-start=.cfg_ro=0x00810680")
+set(LOPT  "-Wl,-u,vfprintf -lm -Wl,--section-start=.fw_info=0x00810000 -Wl,--section-start=.eeprom=0x00810020 -Wl,--section-start=.cfg_ro=0x00810680")
+#set(LOPT "${LOPT} -Wl,-nostdlib")
+#set(LOPT "${LOPT} -mrelax")
+set(LOPT "${LOPT} -Wl,-s")
+set(LOPT "${LOPT} -Wl,--gc-sections")
+
 set(CMCU      "-mmcu=${MCU}")
 #set(CDEFS     "-DF_CPU=${F_CPU}") # -DBAUD=${BAUD}
 
@@ -94,9 +100,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}.el
 #target_link_libraries(${PROJECT_NAME} printf_flt)
 #target_link_libraries(${PROJECT_NAME} m)
 # Compiling targets
-add_custom_target(strip  ALL    ${AVRSTRIP} "${PROJECT_NAME}.elf" DEPENDS ${PROJECT_NAME})
-add_custom_target(hex    ALL    ${OBJCOPY} -R .eeprom -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.hex" DEPENDS strip)
-add_custom_target(eeprom ALL    ${OBJCOPY} -j .eeprom --change-section-lma .eeprom=0 -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.eep" DEPENDS strip)
+
+add_custom_target(strip  ALL    ${AVRSTRIP} "${PROJECT_NAME}.elf" -o "${PROJECT_NAME}_min.elf" DEPENDS ${PROJECT_NAME})
+add_custom_target(hex    ALL    ${OBJCOPY} -R .eeprom -O ihex -R .fw_info -R .cfg_ro "${PROJECT_NAME}.elf" "${PROJECT_NAME}.hex" DEPENDS strip)
+add_custom_target(eeprom ALL    ${OBJCOPY} -j .eeprom --change-section-lma .eeprom=0x20 -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.eep" DEPENDS strip)
 add_custom_target(lss    ALL    ${OBJDUMP} -h -S "${PROJECT_NAME}.elf" > "${PROJECT_NAME}.lss" DEPENDS strip)
 
 
