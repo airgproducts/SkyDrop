@@ -31,9 +31,9 @@ uint8_t raw_start(char * path)
 
 void raw_step()
 {
-	uint8_t line[35];
+	uint8_t line[39];
 	uint16_t wl;
-	uint8_t l = 35;
+	uint8_t l = 39;
 
 	line[0] = 0xAA;
 
@@ -55,6 +55,8 @@ void raw_step()
 	{
 		memset(line + 27, 0xFF, 8);
 	}
+
+    memcpy(line + 35, (void *)&fc.vario.vario, 4);
 
 	assert(f_write(&log_file, line, l, &wl) == FR_OK);
 	assert(wl == l);
