@@ -6,6 +6,7 @@ file(GLOB SRC_PROTOCOL "${DIR}/protocols/*.c*")
 set(SRC_FILES ${SRC_FILES} 
 "${DIR}/logger/igc.cpp"
 "${DIR}/logger/kml.cpp"
+"${DIR}/logger/raw.cpp"
 "${DIR}/logger/logger.cpp"
 "${DIR}/logger/sha256.cpp"
 ${SRC_PROTOCOL}
