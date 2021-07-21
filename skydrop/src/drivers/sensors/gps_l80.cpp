@@ -121,6 +121,7 @@ void gps_parse_rmc()
 	uint8_t hour = atoi_n(ptr + 0, 2);
 	uint8_t min = atoi_n(ptr + 2, 2);
 	uint8_t sec = atoi_n(ptr + 4, 2);
+	uint16_t msec = atoi_n(ptr + 7, 3);
 
 //	DEBUG("%02d:%02d:%02d\n", hour, min, sec);
 
@@ -276,6 +277,7 @@ void gps_parse_rmc()
 	}
 
 	fc.gps_data.utc_time = datetime_to_epoch(sec, min, hour, day, month, year);
+	fc.gps_data.utc_ms = msec;
 
 	if (config.connectivity.forward_gps && fc.gps_data.valid)
 	{
@@ -513,6 +515,10 @@ void gps_detail()
 	fprintf_P(gps_out, PSTR("$PMTK314,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"));
 }
 
+void gps_set_rate() {
+	fprintf_P(gps_out, PSTR("$PMTK300,250,0,0,0,0*2A\r\n"));
+}
+
 void gps_set_baudrate()
 {
 	//DEBUG("set_baudrate\n");
@@ -520,7 +526,6 @@ void gps_set_baudrate()
 	gps_uart.FlushTxBuffer();
 	_delay_ms(1);
 }
-
 
 void gps_change_uart_baudrate()
 {
@@ -542,6 +547,9 @@ void gps_parse_sys()
 		gps_detail();
 	else
 		gps_normal();
+		
+	
+	gps_set_rate();
 }
 
 #ifdef GPS_SIMULATION

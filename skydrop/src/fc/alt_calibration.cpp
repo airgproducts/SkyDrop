@@ -81,7 +81,7 @@ void alt_calibration_step()
         // Option 2: Try GPS height
         //
         error = fc.gps_data.vdop * L80_VACCURACY;
-        if (fc.gps_data.vdop != 0 && error < height_min_error)
+        if (fc.gps_data.vdop != 0 && error < height_min_error && -4. < fc.vario.avg && fc.vario.avg < 0.5 && fc.glide_ratio_valid)
         {
             height_min_error = error;
             best_altitude_source = BH_GPS;

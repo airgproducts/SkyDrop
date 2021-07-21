@@ -104,6 +104,7 @@ struct gps_data_t
 
 	uint16_t heading;
 	uint32_t utc_time;
+	uint16_t utc_ms;
 
 	uint8_t fix;        // GPGSA.fix: 1=No Fix, 2=2D fix, 3=3D fix
 	float altitude;

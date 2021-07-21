@@ -236,7 +236,7 @@ EEMEM cfg_t config_ee = {
 		//enabled
 		true,
 		//format
-		LOGGER_IGC,
+		LOGGER_RAW,
 		//pilot
 		log_default_text,
 		//glider_type
